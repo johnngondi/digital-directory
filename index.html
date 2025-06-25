@@ -47,8 +47,62 @@
         font-size: 15px;
         border: 1px solid #ccc;
         border-radius: 10px;
-        margin-bottom: 20px;
+        margin-bottom: 10px;
         box-sizing: border-box;
+      }
+
+      input[type="text"]:focus,
+      input[type="text"]:active {
+        border: 2px solid #b700ff6d;
+        outline: none;
+        box-shadow: 0 0 0 2px rgba(183, 0, 255, 0.2);
+      }
+
+      .toggle-container {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 14px;
+        margin-bottom: 16px;
+        user-select: none;
+        cursor: pointer;
+      }
+
+      .toggle-container input[type="checkbox"] {
+        display: none;
+      }
+
+      .toggle-slider {
+        position: relative;
+        width: 40px;
+        height: 22px;
+        background-color: #ccc;
+        border-radius: 22px;
+        transition: background-color 0.3s ease;
+      }
+
+      .toggle-slider::before {
+        content: "";
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        width: 18px;
+        height: 18px;
+        background-color: white;
+        border-radius: 50%;
+        transition: transform 0.3s ease;
+      }
+
+      .toggle-container input:checked + .toggle-slider {
+        background-color: #b700ff;
+      }
+
+      .toggle-container input:checked + .toggle-slider::before {
+        transform: translateX(18px);
+      }
+
+      .toggle-label {
+        color: #333;
       }
 
       .floor-section {
@@ -198,7 +252,7 @@
     <div id="header">
       <h1>HH Towers • Digital Directory</h1>
       <div class="search-instruction">
-        Search shop name, floor, or shop number below
+        Search by shop name/phone/email, floor, or shop number below
       </div>
       <input
         type="text"
@@ -206,6 +260,16 @@
         placeholder="Type to search..."
         oninput="renderDirectory()"
       />
+
+      <label class="toggle-container">
+        <input
+          type="checkbox"
+          id="showVacantToggle"
+          onchange="renderDirectory()"
+        />
+        <span class="toggle-slider"></span>
+        <span class="toggle-label">Show vacant shops</span>
+      </label>
     </div>
 
     <div id="directory"></div>
@@ -845,11 +909,15 @@
         const query = document
           .getElementById("searchInput")
           .value.toLowerCase();
+        const showVacant = document.getElementById("showVacantToggle").checked;
         const container = document.getElementById("directory");
+
         container.innerHTML = "";
 
         data.floors.forEach((floor) => {
           const filteredShops = floor.shops.filter((shop) => {
+            if (!showVacant && !shop.tenant) return false;
+
             const shopNo = shop.shop_no.toLowerCase();
             const floorName = floor.name.toLowerCase();
 
