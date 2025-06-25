@@ -147,7 +147,7 @@
       }
 
       #popupCard a {
-        color: #007bff;
+        color: #b700ff;
         text-decoration: none;
       }
 
@@ -164,7 +164,7 @@
       }
 
       #popupCard button:hover {
-        background: #0056b3;
+        background: #fce5fd;
       }
 
       /* Animations */
@@ -963,6 +963,17 @@
       function closePopup() {
         document.getElementById("popupOverlay").style.display = "none";
       }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        const overlay = document.getElementById("popupOverlay");
+        const card = document.getElementById("popupCard");
+
+        overlay.addEventListener("click", function (event) {
+          if (!card.contains(event.target)) {
+            closePopup();
+          }
+        });
+      });
 
       window.addEventListener("load", () => {
         const link = document.createElement("link");
